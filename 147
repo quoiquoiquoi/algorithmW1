@@ -1,0 +1,57 @@
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode() : val(0), next(nullptr) {}
+ *     ListNode(int x) : val(x), next(nullptr) {}
+ *     ListNode(int x, ListNode *next) : val(x), next(next) {}
+ * };
+ */
+class Solution {
+public:
+    ListNode* insertionSortList(ListNode* head) {
+        // 1. 基本檢查：如果鏈表為空或只有一個節點，直接回傳
+        if (head == nullptr || head->next == nullptr) {
+            return head;
+        }
+
+        // sortedHead 用來指向已經排好序的新鏈表
+        // 初始時，我們把原鏈表的第一個節點當作已排序鏈表的起點
+        ListNode* sortedHead = head;
+        
+        // curr 從原鏈表的第二個節點開始處理
+        ListNode* curr = head->next;
+        
+        // 將第一個節點的 next 斷開，因為它目前是已排序部分的唯一元素
+        sortedHead->next = nullptr;
+
+        while (curr != nullptr) {
+            // 先存下原鏈表的下一個節點，避免斷鏈
+            ListNode* nextNode = curr->next;
+
+            // --- 情況 A：待插入節點比目前的頭部還要小 ---
+            if (curr->val < sortedHead->val) {
+                curr->next = sortedHead;
+                sortedHead = curr; // 更新頭部
+            } 
+            else {
+                // --- 情況 B：待插入節點應該放在中間或末尾 ---
+                ListNode* temp = sortedHead;
+                // 尋找插入位置：找到一個節點，它的下一個比 curr 大，或者它是末尾
+                while (temp->next != nullptr && temp->next->val < curr->val) {
+                    temp = temp->next;
+                }
+                
+                // 執行插入
+                curr->next = temp->next;
+                temp->next = curr;
+            }
+
+            // 處理下一個節點
+            curr = nextNode;
+        }
+
+        return sortedHead;
+    }
+};
